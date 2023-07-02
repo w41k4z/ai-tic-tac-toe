@@ -19,6 +19,9 @@ class Board:
                     return False
         return True
 
+    def is_available(self, row, col):
+        return self.__board[row][col] == -1
+
     def has_won(self, player_symbol: str):
         win_state = [
             # horizontal

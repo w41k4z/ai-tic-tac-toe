@@ -24,7 +24,46 @@ class AI(Player):
         return self.__predict(game)
 
     def medium_move(self, game):
-        pass
+        opponent_symbol = "O" if self.get_symbol() == "X" else "X"
+
+        # checking for a winnable move
+        for empty_cell in game.get_board().get_empty_cell():
+            game.get_board().set_player(
+                empty_cell[0], empty_cell[1], self.get_symbol())
+
+            if game.has_won(self.get_symbol()):
+                game.get_board().undo_move(empty_cell[0], empty_cell[1])
+                return empty_cell
+
+            game.get_board().undo_move(empty_cell[0], empty_cell[1])
+
+        # defensive move
+        for empty_cell in game.get_board().get_empty_cell():
+            game.get_board().set_player(
+                empty_cell[0], empty_cell[1], opponent_symbol)
+
+            if game.has_won(opponent_symbol):
+                game.get_board().undo_move(empty_cell[0], empty_cell[1])
+                return empty_cell
+
+            game.get_board().undo_move(empty_cell[0], empty_cell[1])
+
+        # creative move
+        # checking for the center
+        if game.get_board().is_available(1, 1):
+            return [1, 1]
+        else:
+            # checking for the corners
+            corners = [[0, 0], [0, 2], [2, 0], [2, 2]]
+            for corner in corners:
+                if game.get_board().is_available(corner[0], corner[1]):
+                    return corner
+
+            # checking for the sides
+            sides = [[0, 1], [1, 0], [1, 2], [2, 1]]
+            for side in sides:
+                if game.get_board().is_available(side[0], side[1]):
+                    return side
 
     def hard_move(self, game):
         return self.__minimax(

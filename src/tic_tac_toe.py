@@ -74,5 +74,5 @@ class TicTacToe:
         window.mainloop()
 
 
-tic_tac_toe = TicTacToe(1, "hard")
+tic_tac_toe = TicTacToe(1, "medium")
 tic_tac_toe.start()
