@@ -1,4 +1,5 @@
 from game.player import Player
+from joblib import load
 
 
 class AI(Player):
@@ -8,6 +9,8 @@ class AI(Player):
         if difficulty not in ["easy", "medium", "hard"]:
             raise ValueError("Invalid difficulty")
         self.__dificulty = difficulty
+        self.__model = load("model/x_prediction_model.joblib") if symbol == "X" else load(
+            "model/o_prediction_model.joblib")
 
     def get_best_move(self, game) -> tuple:
         if self.__dificulty == "easy":
@@ -18,7 +21,7 @@ class AI(Player):
             return self.hard_move(game)
 
     def easy_move(self, game):
-        pass
+        return self.__predict(game)
 
     def medium_move(self, game):
         pass
@@ -26,6 +29,11 @@ class AI(Player):
     def hard_move(self, game):
         return self.__minimax(
             game, game.get_board().get_depth(), self.get_symbol())["move"]
+
+    def __predict(self, game):
+        opponent_latest_move = game.get_board().get_array_expression()
+        prediction = self.__model.predict([opponent_latest_move])[0]
+        return [prediction[0], prediction[1]]
 
     def __minimax(self, game, depth: int, player_symbol: str) -> int:
         opponent_symbol = "O" if player_symbol == "X" else "X"

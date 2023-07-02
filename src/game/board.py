@@ -1,21 +1,21 @@
 class Board:
 
     def __init__(self) -> None:
-        self.__board = [[" " for _ in range(3)] for _ in range(3)]
+        self.__board = [[-1 for _ in range(3)] for _ in range(3)]
         pass
 
     def set_player(self, row: int, col: int, player_symbol: str) -> None:
-        if self.__board[row][col] != " ":
-            raise ValueError("Invalid move")
-        self.__board[row][col] = player_symbol
+        if self.__board[row][col] != -1:
+            raise ValueError(f'Invalid move for {row} {col}')
+        self.__board[row][col] = 1 if player_symbol == "X" else 0
 
     def undo_move(self, row: int, col: int):
-        self.__board[row][col] = " "
+        self.__board[row][col] = -1
 
     def is_full(self):
         for row in self.__board:
             for col in row:
-                if col == " ":
+                if col == -1:
                     return False
         return True
 
@@ -33,16 +33,23 @@ class Board:
             [self.__board[0][0], self.__board[1][1], self.__board[2][2]],
             [self.__board[0][2], self.__board[1][1], self.__board[2][0]]
         ]
-
-        return True if [player_symbol, player_symbol, player_symbol] in win_state else False
+        value = 1 if player_symbol == "X" else 0
+        return True if [value, value, value] in win_state else False
 
     def get_empty_cell(self) -> list:
         empty_cells = []
         for row in range(3):
             for col in range(3):
-                if self.__board[row][col] == " ":
+                if self.__board[row][col] == -1:
                     empty_cells.append([row, col])
         return empty_cells
 
     def get_depth(self) -> int:
         return len(self.get_empty_cell())
+
+    def get_array_expression(self) -> list:
+        expr = []
+        for row in self.__board:
+            for col in row:
+                expr.append(col)
+        return expr

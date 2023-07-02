@@ -6,11 +6,12 @@ import tkinter as tk
 
 class TicTacToe:
 
-    def __init__(self, player_choice: int) -> None:
+    def __init__(self, player_choice: int, difficulty="hard") -> None:
         self.__board = Board()
         self.__player = Player("X" if player_choice == 1 else "O")
-        self.__ai = AI("O" if player_choice == 1 else "X")
+        self.__ai = AI("O" if player_choice == 1 else "X", difficulty)
         self.__player_turn = True if player_choice == 1 else False
+        self.__player_start = True if player_choice == 1 else False
 
     def get_board(self) -> Board:
         return self.__board
@@ -61,9 +62,17 @@ class TicTacToe:
                 button_row.append(button)
             buttons.append(button_row)
 
+        if not self.__player_start:
+            from random import randint
+            row = randint(0, 2)
+            col = randint(0, 2)
+            buttons[row][col]["text"] = self.__ai.get_symbol()
+            self.__board.set_player(row, col, self.__ai.get_symbol())
+            self.__player_turn = True
+
         # Start the main event loop
         window.mainloop()
 
 
-tic_tac_toe = TicTacToe(1)
+tic_tac_toe = TicTacToe(1, "hard")
 tic_tac_toe.start()
